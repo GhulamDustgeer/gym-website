@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>IronCore Gym | Elite Personal Training & Fitness Studio</title>
+    <title>IronCore Gym</title>
     <meta name="description" content="Professional gym trainer offering personal training, muscle gain, weight loss programs and fitness courses. Join the black iron community today!">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/x-icon" href="#">
@@ -48,13 +48,25 @@
 <!-- Hero Section -->
 <section id="home" class="hero-section">
     <div class="container">
-        <div class="hero-content text-center text-lg-start">
-            <span class="hero-subtitle animate__animated animate__fadeInUp">🔥 HI, I'M JAMIE FOX</span>
-            <h1 class="hero-title animate__animated animate__fadeInUp animate__delay-1s">ELITE <span class="text-gradient">GYM TRAINER</span></h1>
-            <p class="hero-description animate__animated animate__fadeInUp animate__delay-1s">Transform your body, crush your limits, and join the black iron tribe. Personalized training, world-class facility, and relentless motivation.</p>
-            <div class="animate__animated animate__fadeInUp animate__delay-2s">
-                <a href="#courses" class="btn-hero">EXPLORE COURSES <i class="fas fa-arrow-right ms-2"></i></a>
-                <a href="#gymtour" class="btn-outline-hero">VIRTUAL TOUR</a>
+        <div class="hero-content">
+            <div class="hero-text-wrapper">
+                <span class="hero-subtitle">
+                    <i class="fas fa-fire"></i> HI, I'M JAMIE FOX
+                </span>
+                <h1 class="hero-title">
+                    ELITE <span class="text-gradient">GYM TRAINER</span>
+                    <i class="fas fa-dumbbell"></i>
+                </h1>
+                <p class="hero-description">
+                    <i class="fas fa-check-circle"></i> Transform your body, 
+                    <i class="fas fa-chart-line"></i> crush your limits, 
+                    <i class="fas fa-users"></i> and join the black iron tribe.
+                    <br>Personalized training, world-class facility, and relentless motivation.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#courses" class="btn-hero">EXPLORE COURSES <i class="fas fa-arrow-right"></i></a>
+                    <a href="#gymtour" class="btn-outline-hero">VIRTUAL TOUR</a>
+                </div>
             </div>
         </div>
     </div>
@@ -422,7 +434,69 @@
         <p class="text-white-50">Copyright &copy; 2025 IronCore Gym | All rights reserved</p>
     </div>
 </footer>
+<!-- ============================================
+     BOOK A FREE SESSION MODAL - Google Sheets Integration
+     ============================================ -->
 
+<!-- Floating Book Session Button -->
+<div class="book-session-float">
+    <button class="book-session-btn" id="openSessionBtn">
+        <i class="fas fa-calendar-alt"></i> Book Free Session
+    </button>
+</div>
+
+<!-- Modal Overlay -->
+<div id="modalOverlay" class="modal-overlay"></div>
+
+<!-- Book Session Modal -->
+<div id="sessionModal" class="session-modal">
+    <div class="session-header">
+        <h3><i class="fas fa-calendar-alt me-2"></i> Book a Free Session</h3>
+        <button class="session-close" id="closeSessionBtn">&times;</button>
+    </div>
+    <div class="session-body">
+        <form id="bookSessionForm">
+            <div class="session-input-group">
+                <input type="text" id="sessionName" placeholder="Full Name" required>
+            </div>
+            <div class="session-input-group">
+                <input type="email" id="sessionEmail" placeholder="Email Address" required>
+            </div>
+            <div class="session-input-group">
+                <input type="tel" id="sessionPhone" placeholder="Phone Number" required>
+            </div>
+            <div class="session-input-group">
+                <select id="sessionType" required>
+                    <option value="">Select Session Type</option>
+                    <option value="Personal Training">🏋️ Personal Training</option>
+                    <option value="Group Class">👥 Group Class</option>
+                    <option value="Consultation">📋 Free Consultation</option>
+                    <option value="Nutrition Plan">🥗 Nutrition Plan</option>
+                </select>
+            </div>
+            <div class="session-input-group">
+                <input type="date" id="sessionDate" required>
+            </div>
+            <div class="session-input-group">
+                <select id="sessionTime" required>
+                    <option value="">Select Time</option>
+                    <option value="6:00 AM">🌅 6:00 AM - 7:00 AM</option>
+                    <option value="7:00 AM">🌄 7:00 AM - 8:00 AM</option>
+                    <option value="8:00 AM">☀️ 8:00 AM - 9:00 AM</option>
+                    <option value="5:00 PM">🌤️ 5:00 PM - 6:00 PM</option>
+                    <option value="6:00 PM">🌙 6:00 PM - 7:00 PM</option>
+                    <option value="7:00 PM">⭐ 7:00 PM - 8:00 PM</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-session-submit" id="submitSessionBtn">
+                <i class="fas fa-check-circle me-2"></i> BOOK NOW
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toastMsg" class="toast-notification"></div>
 <!-- Scripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
