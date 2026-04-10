@@ -294,3 +294,234 @@ function escapeHtml(str) {
         return m;
     });
 }
+// ============================================
+// GOOGLE SHEETS INTEGRATION - Book a Session
+// ============================================
+
+// REPLACE THIS WITH YOUR ACTUAL GOOGLE APPS SCRIPT URL
+
+// ============================================
+// GOOGLE SHEETS INTEGRATION - WORKING CODE
+// ============================================
+
+const GOOGLE_SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbxvIaTT28bC6ey6c_8pKinGQczHktNxOpkSrIpJ3PHbmqMfsm5F2Saxo8BpxaPpWVKQ/exec';
+
+$(document).ready(function() {
+    
+    // Set minimum date to today
+    let today = new Date().toISOString().split('T')[0];
+    $('#sessionDate').attr('min', today);
+    
+    // Open modal
+    $('#openSessionBtn').on('click', function(e) {
+        e.preventDefault();
+        $('#sessionModal').fadeIn(300);
+        $('#modalOverlay').fadeIn(300);
+        $('body').css('overflow', 'hidden');
+    });
+    
+    // Close modal
+    function closeModal() {
+        $('#sessionModal').fadeOut(300);
+        $('#modalOverlay').fadeOut(300);
+        $('body').css('overflow', 'auto');
+        // Reset form when closing
+        $('#bookSessionForm')[0].reset();
+    }
+    
+    $('#closeSessionBtn').on('click', closeModal);
+    $('#modalOverlay').on('click', closeModal);
+    
+    // ESC key to close
+    $(document).on('keydown', function(e) {
+        if (e.key === 'Escape' && $('#sessionModal').is(':visible')) {
+            closeModal();
+        }
+    });
+    
+    // Show toast message (not alert)
+    function showToast(message, type = 'success') {
+        // Remove existing toast
+        $('#toastMsg').remove();
+        
+        let toast = $(`
+            <div id="toastMsg" class="toast-notification ${type}">
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                <span>${message}</span>
+            </div>
+        `);
+        $('body').append(toast);
+        toast.fadeIn(300);
+        setTimeout(() => {
+            toast.fadeOut(300, function() { $(this).remove(); });
+        }, 4000);
+    }
+    
+    // Handle form submission - FIXED VERSION
+    $('#bookSessionForm').off('submit').on('submit', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        console.log("Form submitted"); // Debug log
+        
+        // Get form values
+        let name = $('#sessionName').val().trim();
+        let email = $('#sessionEmail').val().trim();
+        let phone = $('#sessionPhone').val().trim();
+        let sessionType = $('#sessionType').val();
+        let date = $('#sessionDate').val();
+        let time = $('#sessionTime').val();
+        
+        console.log("Values:", {name, email, phone, sessionType, date, time}); // Debug log
+        
+        // Validation
+        if (!name) {
+            showToast('Please enter your name!', 'error');
+            return false;
+        }
+        if (!email) {
+            showToast('Please enter your email!', 'error');
+            return false;
+        }
+        if (!phone) {
+            showToast('Please enter your phone number!', 'error');
+            return false;
+        }
+        if (!sessionType) {
+            showToast('Please select a session type!', 'error');
+            return false;
+        }
+        if (!date) {
+            showToast('Please select a date!', 'error');
+            return false;
+        }
+        if (!time) {
+            showToast('Please select a time!', 'error');
+            return false;
+        }
+        
+        // Email format validation
+        let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            showToast('Please enter a valid email address!', 'error');
+            return false;
+        }
+        
+        // Disable button and show loading
+        let submitBtn = $('#submitSessionBtn');
+        let originalText = submitBtn.html();
+        submitBtn.html('<span class="loading-spinner"></span> Processing...').prop('disabled', true);
+        
+        // Prepare data
+        let leadData = {
+            name: name,
+            email: email,
+            phone: phone,
+            sessionType: sessionType,
+            date: date,
+            time: time
+        };
+        
+        console.log("Sending data to Google Sheets:", leadData); // Debug log
+        
+        // Send to Google Sheets
+        fetch(GOOGLE_SHEETS_API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(leadData)
+        })
+        .then(() => {
+            console.log("Data sent successfully"); // Debug log
+            showToast(`✅ Thank you ${name}! Your session is booked. We'll contact you within 24 hours.`, 'success');
+            
+            // Reset form
+            $('#bookSessionForm')[0].reset();
+            
+            // Close modal after 2 seconds
+            setTimeout(() => {
+                closeModal();
+            }, 2000);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            showToast('❌ Connection error. Please try again or call us directly!', 'error');
+        })
+        .finally(() => {
+            submitBtn.html(originalText).prop('disabled', false);
+        });
+        
+        return false;
+    });
+});
+
+// Add CSS for toast and spinner if not present
+if (!$('#dynamicStyles').length) {
+    $('head').append(`
+        <style id="dynamicStyles">
+            .loading-spinner {
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                border: 2px solid #000;
+                border-top-color: transparent;
+                border-radius: 50%;
+                animation: spin 0.6s linear infinite;
+                margin-right: 8px;
+            }
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+            .toast-notification {
+                position: fixed;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #1a1a1a;
+                padding: 14px 28px;
+                border-radius: 50px;
+                z-index: 10000;
+                display: none;
+                animation: fadeInUp 0.3s ease;
+                font-size: 14px;
+                white-space: nowrap;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+                font-weight: 500;
+            }
+            .toast-notification.success {
+                border-left: 4px solid #28a745;
+                border-right: 4px solid #28a745;
+                color: #28a745;
+            }
+            .toast-notification.error {
+                border-left: 4px solid #dc3545;
+                border-right: 4px solid #dc3545;
+                color: #dc3545;
+            }
+            .toast-notification i {
+                margin-right: 8px;
+            }
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateX(-50%) translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(-50%) translateY(0);
+                }
+            }
+            @media (max-width: 768px) {
+                .toast-notification {
+                    white-space: normal;
+                    text-align: center;
+                    max-width: 90%;
+                    font-size: 12px;
+                    padding: 12px 20px;
+                }
+            }
+        </style>    `);
+}
